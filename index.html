@@ -235,6 +235,7 @@ body{font-family:var(--font-b);font-size:16px;line-height:1.5;color:var(--fg-1);
     <a class="nav-link" href="#tabela-qx">Tabela qx</a>
     <a class="nav-link" href="#expectativa">Expectativa</a>
     <a class="nav-link" href="#impacto">Impacto por Idade</a>
+    <a class="nav-link" href="#comparacao-atualizacao">Comparação 2015→2026</a>
     <a class="nav-link" href="#beneficios">Benefícios</a>
     <a class="nav-link" href="#grupo">Perfil do Grupo</a>
     <a class="nav-link" href="#matriz">Matriz</a>
@@ -482,6 +483,73 @@ body{font-family:var(--font-b);font-size:16px;line-height:1.5;color:var(--fg-1);
     <div class="g2">
       <div class="chart-wrap" style="margin-bottom:0"><div class="chart-hdr" id="impQxHdr">qx na idade selecionada — todas as tábuas</div><div id="chartImpQx" style="height:340px"></div></div>
       <div class="chart-wrap" style="margin-bottom:0"><div class="chart-hdr" id="impExHdr">Expectativa de vida (ex) na idade selecionada</div><div id="chartImpEx" style="height:340px"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- S6B · COMPARAÇÃO 2015/2021 → 2026 -->
+<section class="section section-alt" id="comparacao-atualizacao">
+  <div class="section-inner">
+    <div class="eyebrow">Seção 6B · Impacto da Atualização</div>
+    <h2 class="section-title">Comparação BR-EMS — 2015 / 2021 → 2026</h2>
+    <p class="section-desc">Avalie o impacto prático da atualização das tábuas sobre produtos de seguro de vida (mortalidade) e previdência (sobrevivência). Ajuste a idade e os parâmetros financeiros para ver os efeitos em qx, expectativa de vida e custo esperado.</p>
+    <div class="tab-bar">
+      <button class="tab-btn active" id="cmpTabMT" onclick="setCmpTab('mt')">Seguros de Vida (Mortalidade — BR-EMSmt)</button>
+      <button class="tab-btn" id="cmpTabSB" onclick="setCmpTab('sb')">Previdência (Sobrevivência — BR-EMSsb)</button>
+    </div>
+
+    <!-- MT Panel -->
+    <div class="tab-content active" id="cmpPanelMT">
+      <div class="ctrl-row">
+        <div class="ctrl-group">
+          <span class="ctrl-label">Sexo</span>
+          <div class="seg-group">
+            <button class="seg-btn active" id="cmpMTSexM" onclick="setCmpMTSex('M')">Masc.</button>
+            <button class="seg-btn" id="cmpMTSexF" onclick="setCmpMTSex('F')">Fem.</button>
+          </div>
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">Idade de referência</span>
+          <input class="ctrl-input" type="number" id="cmpMTIdade" value="40" min="18" max="90" oninput="renderCmpMT()">
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">Capital segurado (R$)</span>
+          <input class="ctrl-input" type="number" id="cmpMTCapital" value="100000" min="1000" step="1000" style="width:130px" oninput="renderCmpMT()">
+        </div>
+      </div>
+      <div id="kpiCmpMT" class="kpi-grid" style="margin-bottom:22px"></div>
+      <div class="g2">
+        <div class="chart-wrap" style="margin-bottom:0"><div class="chart-hdr">qx por versão — probabilidade de morte no ano</div><div id="chartCmpMTqx" style="height:300px"></div></div>
+        <div class="chart-wrap" style="margin-bottom:0"><div class="chart-hdr">Sinistro esperado (R$) por versão</div><div id="chartCmpMTsinistro" style="height:300px"></div></div>
+      </div>
+      <div class="insight-box" id="cmpMTInsight" style="margin-top:18px"></div>
+    </div>
+
+    <!-- SB Panel -->
+    <div class="tab-content" id="cmpPanelSB">
+      <div class="ctrl-row">
+        <div class="ctrl-group">
+          <span class="ctrl-label">Sexo</span>
+          <div class="seg-group">
+            <button class="seg-btn active" id="cmpSBSexM" onclick="setCmpSBSex('M')">Masc.</button>
+            <button class="seg-btn" id="cmpSBSexF" onclick="setCmpSBSex('F')">Fem.</button>
+          </div>
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">Idade de referência</span>
+          <input class="ctrl-input" type="number" id="cmpSBIdade" value="45" min="18" max="90" oninput="renderCmpSB()">
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">Renda mensal (R$)</span>
+          <input class="ctrl-input" type="number" id="cmpSBRenda" value="1000" min="100" step="100" style="width:110px" oninput="renderCmpSB()">
+        </div>
+      </div>
+      <div id="kpiCmpSB" class="kpi-grid" style="margin-bottom:22px"></div>
+      <div class="g2">
+        <div class="chart-wrap" style="margin-bottom:0"><div class="chart-hdr">qx por versão — probabilidade de morte no ano</div><div id="chartCmpSBqx" style="height:300px"></div></div>
+        <div class="chart-wrap" style="margin-bottom:0"><div class="chart-hdr">Renda vitalícia total esperada (R$ = 12 × renda × e<sub>x</sub>)</div><div id="chartCmpSBrenda" style="height:300px"></div></div>
+      </div>
+      <div class="insight-box" id="cmpSBInsight" style="margin-top:18px"></div>
     </div>
   </div>
 </section>
@@ -1229,12 +1297,146 @@ window.addEventListener('scroll',()=>{
   document.querySelectorAll('.nav-link').forEach(l=>{const sec=document.querySelector(l.getAttribute('href'));if(sec){const r=sec.getBoundingClientRect();l.classList.toggle('active',r.top<=70&&r.bottom>70);}});
 });
 
+// ── COMPARAÇÃO 2015/2021 → 2026 ───────────────────────────────────────────
+const CMP={mtSex:'M',sbSex:'M'};
+
+function setCmpTab(t){
+  ['mt','sb'].forEach(x=>{
+    document.getElementById(`cmpTab${x.toUpperCase()}`).classList.toggle('active',x===t);
+    document.getElementById(`cmpPanel${x.toUpperCase()}`).classList.toggle('active',x===t);
+  });
+}
+
+function setCmpMTSex(s){
+  CMP.mtSex=s;
+  ['M','F'].forEach(x=>document.getElementById(`cmpMTSex${x}`).classList.toggle('active',x===s));
+  renderCmpMT();
+}
+
+function setCmpSBSex(s){
+  CMP.sbSex=s;
+  ['M','F'].forEach(x=>document.getElementById(`cmpSBSex${x}`).classList.toggle('active',x===s));
+  renderCmpSB();
+}
+
+function _cmpDeltaTag(v,ref,invertColors){
+  if(v==null||ref==null||ref===0)return '';
+  const pct=(v-ref)/ref;
+  const isNeg=pct<0;
+  const isGood=invertColors?!isNeg:isNeg;
+  const cls=isGood?'tag-green':'tag-orange';
+  return `<span class="tag ${cls}" style="margin-left:4px">${pct>=0?'+':''}${(pct*100).toFixed(2)}%</span>`;
+}
+
+function renderCmpMT(){
+  const sex=CMP.mtSex;
+  const idade=+document.getElementById('cmpMTIdade').value;
+  const capital=+document.getElementById('cmpMTCapital').value;
+  const versions=['2015','2021','2026'];
+  const colors=['#E3B23C','#2E4057','#FF7000'];
+  const labels=['BR-EMS 2015','BR-EMS 2021','BR-EMS 2026'];
+
+  const vals=versions.map(v=>{
+    const k=`BR-EMSmt-${v}-${sex}`;
+    const qx=getQx(k,idade);
+    const ex=getEx(k,idade);
+    const sinistro=qx!=null?qx*capital:null;
+    return{qx,ex,sinistro};
+  });
+
+  const fmtBRL=n=>n!=null?n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+  document.getElementById('kpiCmpMT').innerHTML=versions.map((ver,i)=>{
+    const v=vals[i];
+    const ref15=vals[0];
+    return `<div class="kpi" style="border-left-color:${colors[i]}">
+      <div class="kpi-label">${labels[i]}</div>
+      <div class="kpi-value" style="font-size:1.25rem">${v.qx!=null?v.qx.toFixed(6):'—'}${i>0?_cmpDeltaTag(v.qx,ref15.qx,true):''}</div>
+      <div class="kpi-sub">qx · prob. de morte no ano</div>
+      <div style="margin-top:7px;font-size:.82rem;color:var(--fg-2)">e<sub>${idade}</sub> = <strong>${v.ex!=null?v.ex.toFixed(1):'—'}</strong> anos${i>0?_cmpDeltaTag(v.ex,ref15.ex,false):''}</div>
+      <div style="font-size:.82rem;color:var(--fg-2)">Sinistro esp.: <strong>R$ ${fmtBRL(v.sinistro)}</strong>${i>0?_cmpDeltaTag(v.sinistro,ref15.sinistro,true):''}</div>
+    </div>`;
+  }).join('')+`<div class="kpi c-navy">
+    <div class="kpi-label">Δ Variação 2021 → 2026</div>
+    <div class="kpi-value" style="font-size:1.25rem">${vals[1].qx&&vals[2].qx?((vals[2].qx-vals[1].qx)/vals[1].qx*100).toFixed(2)+'%':'—'}</div>
+    <div class="kpi-sub">Δ qx${vals[1].qx&&vals[2].qx?(vals[2].qx<vals[1].qx?' — ↓ menor mortalidade':' — ↑ maior mortalidade'):''}</div>
+    <div style="margin-top:7px;font-size:.82rem;color:var(--fg-2)">Sinistro 2021→2026: <strong>${vals[1].sinistro&&vals[2].sinistro?((vals[2].sinistro-vals[1].sinistro)/vals[1].sinistro*100).toFixed(2)+'%':'—'}</strong></div>
+    <div style="font-size:.82rem;color:var(--fg-2)">Δ e<sub>${idade}</sub>: <strong>${vals[1].ex&&vals[2].ex?((vals[2].ex-vals[1].ex)>=0?'+':'')+(vals[2].ex-vals[1].ex).toFixed(1)+' anos':'—'}</strong></div>
+  </div>`;
+
+  const layout={margin:{t:30,r:20,b:40,l:70},plot_bgcolor:'#fff',paper_bgcolor:'#fff',showlegend:false,
+    font:{family:"Carlito,Calibri,system-ui",size:11},bargap:0.35};
+  Plotly.react('chartCmpMTqx',[{type:'bar',x:labels,y:vals.map(v=>v.qx),marker:{color:colors},
+    text:vals.map(v=>v.qx!=null?v.qx.toFixed(5):''),textposition:'outside',cliponaxis:false}],
+    {...layout,yaxis:{title:'qx',tickformat:'.5f'}},{responsive:true});
+  Plotly.react('chartCmpMTsinistro',[{type:'bar',x:labels,y:vals.map(v=>v.sinistro),marker:{color:colors},
+    text:vals.map(v=>v.sinistro!=null?'R$ '+fmtBRL(v.sinistro):''),textposition:'outside',cliponaxis:false}],
+    {...layout,yaxis:{title:'Sinistro Esperado (R$)'}},{responsive:true});
+
+  const dqPct=vals[1].qx&&vals[2].qx?((vals[2].qx-vals[1].qx)/vals[1].qx*100).toFixed(2):null;
+  document.getElementById('cmpMTInsight').innerHTML=`<strong>Leitura — ${labels[2]} vs ${labels[1]} (${sex==='M'?'Masculino':'Feminino'}, idade ${idade})</strong>`+
+    (dqPct!=null?`A tábua BR-EMSmt 2026 registra qx = ${vals[2].qx.toFixed(6)}, variação de <strong>${dqPct}%</strong> em relação à versão 2021 (${vals[1].qx.toFixed(6)}). `+
+    `Expectativa de vida passou de ${vals[1].ex?.toFixed(1)} para ${vals[2].ex?.toFixed(1)} anos. Sinistro esperado sobre R$ ${capital.toLocaleString('pt-BR')}: `+
+    `de <strong>R$ ${fmtBRL(vals[1].sinistro)}</strong> para <strong>R$ ${fmtBRL(vals[2].sinistro)}</strong>.`:'Dados não disponíveis para a idade selecionada.');
+}
+
+function renderCmpSB(){
+  const sex=CMP.sbSex;
+  const idade=+document.getElementById('cmpSBIdade').value;
+  const renda=+document.getElementById('cmpSBRenda').value;
+  const versions=['2015','2021','2026'];
+  const colors=['#E3B23C','#2E4057','#FF7000'];
+  const labels=['BR-EMS 2015','BR-EMS 2021','BR-EMS 2026'];
+
+  const vals=versions.map(v=>{
+    const k=`BR-EMSsb-${v}-${sex}`;
+    const qx=getQx(k,idade);
+    const ex=getEx(k,idade);
+    const renda_total=ex!=null?renda*12*ex:null;
+    return{qx,ex,renda_total};
+  });
+
+  const fmtBRL=n=>n!=null?n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+  const fmtBRL0=n=>n!=null?n.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}):'—';
+  document.getElementById('kpiCmpSB').innerHTML=versions.map((ver,i)=>{
+    const v=vals[i];
+    const ref15=vals[0];
+    return `<div class="kpi" style="border-left-color:${colors[i]}">
+      <div class="kpi-label">${labels[i]}</div>
+      <div class="kpi-value" style="font-size:1.25rem">${v.qx!=null?v.qx.toFixed(6):'—'}${i>0?_cmpDeltaTag(v.qx,ref15.qx,false):''}</div>
+      <div class="kpi-sub">qx · prob. de morte no ano</div>
+      <div style="margin-top:7px;font-size:.82rem;color:var(--fg-2)">e<sub>${idade}</sub> = <strong>${v.ex!=null?v.ex.toFixed(1):'—'}</strong> anos${i>0?_cmpDeltaTag(v.ex,ref15.ex,false):''}</div>
+      <div style="font-size:.82rem;color:var(--fg-2)">Renda vitalícia: <strong>R$ ${fmtBRL0(v.renda_total)}</strong>${i>0?_cmpDeltaTag(v.renda_total,ref15.renda_total,false):''}</div>
+    </div>`;
+  }).join('')+`<div class="kpi c-navy">
+    <div class="kpi-label">Δ Variação 2021 → 2026</div>
+    <div class="kpi-value" style="font-size:1.25rem">${vals[1].ex&&vals[2].ex?((vals[2].ex-vals[1].ex)/vals[1].ex*100).toFixed(2)+'%':'—'}</div>
+    <div class="kpi-sub">Δ e<sub>${idade}</sub>${vals[1].ex&&vals[2].ex?(vals[2].ex>vals[1].ex?' — ↑ maior longevidade':' — ↓ menor longevidade'):''}</div>
+    <div style="margin-top:7px;font-size:.82rem;color:var(--fg-2)">Renda 2021→2026: <strong>${vals[1].renda_total&&vals[2].renda_total?((vals[2].renda_total-vals[1].renda_total)/vals[1].renda_total*100).toFixed(2)+'%':'—'}</strong></div>
+    <div style="font-size:.82rem;color:var(--fg-2)">Δ e<sub>${idade}</sub>: <strong>${vals[1].ex&&vals[2].ex?((vals[2].ex-vals[1].ex)>=0?'+':'')+(vals[2].ex-vals[1].ex).toFixed(1)+' anos':'—'}</strong></div>
+  </div>`;
+
+  const layout={margin:{t:30,r:20,b:40,l:70},plot_bgcolor:'#fff',paper_bgcolor:'#fff',showlegend:false,
+    font:{family:"Carlito,Calibri,system-ui",size:11},bargap:0.35};
+  Plotly.react('chartCmpSBqx',[{type:'bar',x:labels,y:vals.map(v=>v.qx),marker:{color:colors},
+    text:vals.map(v=>v.qx!=null?v.qx.toFixed(5):''),textposition:'outside',cliponaxis:false}],
+    {...layout,yaxis:{title:'qx',tickformat:'.5f'}},{responsive:true});
+  Plotly.react('chartCmpSBrenda',[{type:'bar',x:labels,y:vals.map(v=>v.renda_total),marker:{color:colors},
+    text:vals.map(v=>v.renda_total!=null?'R$ '+fmtBRL0(v.renda_total):''),textposition:'outside',cliponaxis:false}],
+    {...layout,yaxis:{title:'Renda Vitalícia Esperada (R$)'}},{responsive:true});
+
+  const dexPct=vals[1].ex&&vals[2].ex?((vals[2].ex-vals[1].ex)/vals[1].ex*100).toFixed(2):null;
+  document.getElementById('cmpSBInsight').innerHTML=`<strong>Leitura — ${labels[2]} vs ${labels[1]} (${sex==='M'?'Masculino':'Feminino'}, idade ${idade})</strong>`+
+    (dexPct!=null?`A tábua BR-EMSsb 2026 registra e<sub>${idade}</sub> = ${vals[2].ex?.toFixed(1)} anos, variação de <strong>${dexPct}%</strong> em relação à versão 2021 (${vals[1].ex?.toFixed(1)} anos). `+
+    `Com renda mensal de R$ ${renda.toLocaleString('pt-BR')}, a renda vitalícia total esperada passa de <strong>R$ ${fmtBRL0(vals[1].renda_total)}</strong> para <strong>R$ ${fmtBRL0(vals[2].renda_total)}</strong>.`:'Dados não disponíveis para a idade selecionada.');
+}
+
 // ── INIT ──────────────────────────────────────────────────────────────────
 function refreshAll(){
   renderVersoes();buildMktPills();renderMercado();
   buildTqPills();renderTabelaQx();
   calcExpectativa();
   buildImpRef();renderImpacto();
+  renderCmpMT();renderCmpSB();
   buildBfSelects();calcBeneficios();
   calcGrupo();
   buildMatPills();renderMatriz();
